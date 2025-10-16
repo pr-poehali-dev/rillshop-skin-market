@@ -22,62 +22,7 @@ const Index = () => {
   const [editingSkin, setEditingSkin] = useState<Skin | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  const [skins, setSkins] = useState<Skin[]>([
-    {
-      id: 1,
-      name: "Neon Controller",
-      price: 149,
-      image: "https://cdn.poehali.dev/projects/f903d699-9372-4a9c-9d21-ec87169ab4e5/files/afce6b98-cd22-4974-b215-2424cbaa6ddc.jpg",
-      rarity: "Legendary",
-      category: "Knife",
-      description: "Футуристический нож с неоновой подсветкой"
-    },
-    {
-      id: 2,
-      name: "Crystal Blade",
-      price: 299,
-      image: "https://cdn.poehali.dev/projects/f903d699-9372-4a9c-9d21-ec87169ab4e5/files/61cdd24e-923d-4c1f-b52a-72e9455d1a83.jpg",
-      rarity: "Mythic",
-      category: "Knife",
-      description: "Магическое лезвие из чистого кристалла"
-    },
-    {
-      id: 3,
-      name: "Dragon Fire",
-      price: 499,
-      image: "https://cdn.poehali.dev/projects/f903d699-9372-4a9c-9d21-ec87169ab4e5/files/1d5194b8-33d4-41fd-8973-84de9d1d5c81.jpg",
-      rarity: "Mythic",
-      category: "Gun",
-      description: "Легендарное оружие драконьего пламени"
-    },
-    {
-      id: 4,
-      name: "Shadow Assassin",
-      price: 199,
-      image: "https://cdn.poehali.dev/projects/f903d699-9372-4a9c-9d21-ec87169ab4e5/files/afce6b98-cd22-4974-b215-2424cbaa6ddc.jpg",
-      rarity: "Legendary",
-      category: "Knife",
-      description: "Темный клинок ночного убийцы"
-    },
-    {
-      id: 5,
-      name: "Frost King",
-      price: 349,
-      image: "https://cdn.poehali.dev/projects/f903d699-9372-4a9c-9d21-ec87169ab4e5/files/61cdd24e-923d-4c1f-b52a-72e9455d1a83.jpg",
-      rarity: "Epic",
-      category: "Gun",
-      description: "Ледяное оружие повелителя зимы"
-    },
-    {
-      id: 6,
-      name: "Golden Rage",
-      price: 599,
-      image: "https://cdn.poehali.dev/projects/f903d699-9372-4a9c-9d21-ec87169ab4e5/files/1d5194b8-33d4-41fd-8973-84de9d1d5c81.jpg",
-      rarity: "Mythic",
-      category: "Knife",
-      description: "Позолоченный нож королевской ярости"
-    }
-  ]);
+  const [skins, setSkins] = useState<Skin[]>([]);
 
   const [newSkin, setNewSkin] = useState<NewSkinForm>({
     name: "",
