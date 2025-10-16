@@ -11,6 +11,7 @@ interface SkinCardProps {
   onDelete: (id: number) => void;
   onAddToCart: (skin: Skin) => void;
   getRarityColor: (rarity: string) => string;
+  index: number;
 }
 
 const SkinCard = ({
@@ -19,10 +20,17 @@ const SkinCard = ({
   onEdit,
   onDelete,
   onAddToCart,
-  getRarityColor
+  getRarityColor,
+  index
 }: SkinCardProps) => {
   return (
-    <Card className="overflow-hidden hover-scale card-glow group">
+    <Card 
+      className="overflow-hidden hover-scale card-glow group animate-fade-in opacity-0"
+      style={{
+        animationDelay: `${index * 0.1}s`,
+        animationFillMode: 'forwards'
+      }}
+    >
       <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted to-card">
         <img
           src={skin.image}

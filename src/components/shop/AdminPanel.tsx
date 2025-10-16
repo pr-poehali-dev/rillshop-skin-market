@@ -14,7 +14,7 @@ interface AdminPanelProps {
 
 const AdminPanel = ({ newSkin, onNewSkinChange, onAddSkin }: AdminPanelProps) => {
   return (
-    <Card className="mb-8 bg-card/50 backdrop-blur">
+    <Card className="mb-8 bg-card/50 backdrop-blur animate-slide-up">
       <CardContent className="pt-6">
         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
           <Icon name="Shield" size={24} className="text-primary" />

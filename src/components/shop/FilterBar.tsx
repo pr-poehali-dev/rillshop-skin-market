@@ -18,7 +18,7 @@ const FilterBar = ({
   onResetFilters
 }: FilterBarProps) => {
   return (
-    <div className="mb-6 flex flex-wrap gap-4">
+    <div className="mb-6 flex flex-wrap gap-4 animate-fade-in">
       <div className="flex items-center gap-2">
         <Label>Категория:</Label>
         <select
