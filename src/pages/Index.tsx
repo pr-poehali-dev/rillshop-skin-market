@@ -17,6 +17,7 @@ interface Skin {
   image: string;
   rarity: string;
   category: string;
+  description: string;
 }
 
 interface CartItem extends Skin {
@@ -28,6 +29,10 @@ const Index = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAdminMode, setIsAdminMode] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedRarity, setSelectedRarity] = useState<string>("all");
+  const [editingSkin, setEditingSkin] = useState<Skin | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const [skins, setSkins] = useState<Skin[]>([
     {
@@ -36,7 +41,8 @@ const Index = () => {
       price: 149,
       image: "https://cdn.poehali.dev/projects/f903d699-9372-4a9c-9d21-ec87169ab4e5/files/afce6b98-cd22-4974-b215-2424cbaa6ddc.jpg",
       rarity: "Legendary",
-      category: "Knife"
+      category: "Knife",
+      description: "Футуристический нож с неоновой подсветкой"
     },
     {
       id: 2,
@@ -44,7 +50,8 @@ const Index = () => {
       price: 299,
       image: "https://cdn.poehali.dev/projects/f903d699-9372-4a9c-9d21-ec87169ab4e5/files/61cdd24e-923d-4c1f-b52a-72e9455d1a83.jpg",
       rarity: "Mythic",
-      category: "Knife"
+      category: "Knife",
+      description: "Магическое лезвие из чистого кристалла"
     },
     {
       id: 3,
@@ -52,7 +59,8 @@ const Index = () => {
       price: 499,
       image: "https://cdn.poehali.dev/projects/f903d699-9372-4a9c-9d21-ec87169ab4e5/files/1d5194b8-33d4-41fd-8973-84de9d1d5c81.jpg",
       rarity: "Mythic",
-      category: "Gun"
+      category: "Gun",
+      description: "Легендарное оружие драконьего пламени"
     },
     {
       id: 4,
@@ -60,7 +68,8 @@ const Index = () => {
       price: 199,
       image: "https://cdn.poehali.dev/projects/f903d699-9372-4a9c-9d21-ec87169ab4e5/files/afce6b98-cd22-4974-b215-2424cbaa6ddc.jpg",
       rarity: "Legendary",
-      category: "Knife"
+      category: "Knife",
+      description: "Темный клинок ночного убийцы"
     },
     {
       id: 5,
@@ -68,7 +77,8 @@ const Index = () => {
       price: 349,
       image: "https://cdn.poehali.dev/projects/f903d699-9372-4a9c-9d21-ec87169ab4e5/files/61cdd24e-923d-4c1f-b52a-72e9455d1a83.jpg",
       rarity: "Epic",
-      category: "Gun"
+      category: "Gun",
+      description: "Ледяное оружие повелителя зимы"
     },
     {
       id: 6,
@@ -76,7 +86,8 @@ const Index = () => {
       price: 599,
       image: "https://cdn.poehali.dev/projects/f903d699-9372-4a9c-9d21-ec87169ab4e5/files/1d5194b8-33d4-41fd-8973-84de9d1d5c81.jpg",
       rarity: "Mythic",
-      category: "Knife"
+      category: "Knife",
+      description: "Позолоченный нож королевской ярости"
     }
   ]);
 
@@ -85,7 +96,8 @@ const Index = () => {
     price: "",
     image: "",
     rarity: "Common",
-    category: "Knife"
+    category: "Knife",
+    description: ""
   });
 
   const addToCart = (skin: Skin) => {
@@ -124,9 +136,12 @@ const Index = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
-  const filteredSkins = skins.filter((skin) =>
-    skin.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredSkins = skins.filter((skin) => {
+    const matchesSearch = skin.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || skin.category === selectedCategory;
+    const matchesRarity = selectedRarity === "all" || skin.rarity === selectedRarity;
+    return matchesSearch && matchesCategory && matchesRarity;
+  });
 
   const addNewSkin = () => {
     if (!newSkin.name || !newSkin.price || !newSkin.image) {
@@ -144,7 +159,8 @@ const Index = () => {
       price: parseFloat(newSkin.price),
       image: newSkin.image,
       rarity: newSkin.rarity,
-      category: newSkin.category
+      category: newSkin.category,
+      description: newSkin.description
     };
 
     setSkins([...skins, skin]);
@@ -153,7 +169,8 @@ const Index = () => {
       price: "",
       image: "",
       rarity: "Common",
-      category: "Knife"
+      category: "Knife",
+      description: ""
     });
     toast({
       title: "Скин добавлен",
@@ -166,6 +183,32 @@ const Index = () => {
     toast({
       title: "Скин удален",
       description: "Скин успешно удален из каталога",
+    });
+  };
+
+  const openEditDialog = (skin: Skin) => {
+    setEditingSkin(skin);
+    setIsEditDialogOpen(true);
+  };
+
+  const saveEditedSkin = () => {
+    if (!editingSkin || !editingSkin.name || !editingSkin.price || !editingSkin.image) {
+      toast({
+        title: "Ошибка",
+        description: "Заполните все обязательные поля",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSkins(skins.map((skin) => 
+      skin.id === editingSkin.id ? editingSkin : skin
+    ));
+    setIsEditDialogOpen(false);
+    setEditingSkin(null);
+    toast({
+      title: "Изменения сохранены",
+      description: `${editingSkin.name} обновлен`,
     });
   };
 
@@ -347,6 +390,16 @@ const Index = () => {
                     <option>Pet</option>
                   </select>
                 </div>
+                <div className="md:col-span-2">
+                  <Label htmlFor="skinDescription">Описание</Label>
+                  <Textarea
+                    id="skinDescription"
+                    placeholder="Описание скина..."
+                    value={newSkin.description}
+                    onChange={(e) => setNewSkin({ ...newSkin, description: e.target.value })}
+                    rows={3}
+                  />
+                </div>
               </div>
               <Button onClick={addNewSkin} className="mt-4">
                 <Icon name="Plus" size={16} className="mr-2" />
@@ -355,6 +408,49 @@ const Index = () => {
             </CardContent>
           </Card>
         )}
+
+        <div className="mb-6 flex flex-wrap gap-4">
+          <div className="flex items-center gap-2">
+            <Label>Категория:</Label>
+            <select
+              className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="all">Все</option>
+              <option value="Knife">Knife</option>
+              <option value="Gun">Gun</option>
+              <option value="Pet">Pet</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <Label>Редкость:</Label>
+            <select
+              className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={selectedRarity}
+              onChange={(e) => setSelectedRarity(e.target.value)}
+            >
+              <option value="all">Все</option>
+              <option value="Common">Common</option>
+              <option value="Rare">Rare</option>
+              <option value="Epic">Epic</option>
+              <option value="Legendary">Legendary</option>
+              <option value="Mythic">Mythic</option>
+            </select>
+          </div>
+          {(selectedCategory !== "all" || selectedRarity !== "all") && (
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setSelectedCategory("all");
+                setSelectedRarity("all");
+              }}
+            >
+              <Icon name="X" size={16} className="mr-2" />
+              Сбросить фильтры
+            </Button>
+          )}
+        </div>
 
         <div>
           <div className="flex items-center justify-between mb-6">
@@ -379,27 +475,41 @@ const Index = () => {
                 </div>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-2">
-                    <div>
+                    <div className="flex-1">
                       <h3 className="font-semibold text-lg">{skin.name}</h3>
-                      <p className="text-sm text-muted-foreground">{skin.category}</p>
+                      <p className="text-sm text-muted-foreground mb-2">{skin.category}</p>
+                      {skin.description && (
+                        <p className="text-xs text-muted-foreground line-clamp-2">{skin.description}</p>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center justify-between mt-4">
                     <span className="text-2xl font-bold text-primary">{skin.price} ₽</span>
                     <div className="flex gap-2">
                       {isAdminMode && (
-                        <Button
-                          size="icon"
-                          variant="destructive"
-                          onClick={() => deleteSkin(skin.id)}
-                        >
-                          <Icon name="Trash2" size={16} />
+                        <>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            onClick={() => openEditDialog(skin)}
+                          >
+                            <Icon name="Pencil" size={16} />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="destructive"
+                            onClick={() => deleteSkin(skin.id)}
+                          >
+                            <Icon name="Trash2" size={16} />
+                          </Button>
+                        </>
+                      )}
+                      {!isAdminMode && (
+                        <Button onClick={() => addToCart(skin)}>
+                          <Icon name="ShoppingCart" size={16} className="mr-2" />
+                          Купить
                         </Button>
                       )}
-                      <Button onClick={() => addToCart(skin)}>
-                        <Icon name="ShoppingCart" size={16} className="mr-2" />
-                        Купить
-                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -415,6 +525,100 @@ const Index = () => {
           )}
         </div>
       </main>
+
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Редактировать скин</DialogTitle>
+          </DialogHeader>
+          {editingSkin && (
+            <div className="space-y-4 mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="editName">Название скина</Label>
+                  <Input
+                    id="editName"
+                    value={editingSkin.name}
+                    onChange={(e) => setEditingSkin({ ...editingSkin, name: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editPrice">Цена (₽)</Label>
+                  <Input
+                    id="editPrice"
+                    type="number"
+                    value={editingSkin.price}
+                    onChange={(e) => setEditingSkin({ ...editingSkin, price: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <Label htmlFor="editImage">URL изображения</Label>
+                  <Input
+                    id="editImage"
+                    value={editingSkin.image}
+                    onChange={(e) => setEditingSkin({ ...editingSkin, image: e.target.value })}
+                  />
+                  {editingSkin.image && (
+                    <div className="mt-3">
+                      <img
+                        src={editingSkin.image}
+                        alt="Preview"
+                        className="w-full h-48 object-cover rounded-lg"
+                      />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="editRarity">Редкость</Label>
+                  <select
+                    id="editRarity"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={editingSkin.rarity}
+                    onChange={(e) => setEditingSkin({ ...editingSkin, rarity: e.target.value })}
+                  >
+                    <option>Common</option>
+                    <option>Rare</option>
+                    <option>Epic</option>
+                    <option>Legendary</option>
+                    <option>Mythic</option>
+                  </select>
+                </div>
+                <div>
+                  <Label htmlFor="editCategory">Категория</Label>
+                  <select
+                    id="editCategory"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={editingSkin.category}
+                    onChange={(e) => setEditingSkin({ ...editingSkin, category: e.target.value })}
+                  >
+                    <option>Knife</option>
+                    <option>Gun</option>
+                    <option>Pet</option>
+                  </select>
+                </div>
+                <div className="md:col-span-2">
+                  <Label htmlFor="editDescription">Описание</Label>
+                  <Textarea
+                    id="editDescription"
+                    value={editingSkin.description}
+                    onChange={(e) => setEditingSkin({ ...editingSkin, description: e.target.value })}
+                    rows={4}
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3 justify-end mt-6">
+                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                  Отмена
+                </Button>
+                <Button onClick={saveEditedSkin}>
+                  <Icon name="Save" size={16} className="mr-2" />
+                  Сохранить
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <footer className="bg-sidebar border-t border-sidebar-border mt-16">
         <div className="container mx-auto px-4 py-8">
